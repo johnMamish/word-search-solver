@@ -325,6 +325,27 @@ public class CrosswordWindow extends JFrame
         return result;
     }
     
+    /*public <T> boolean checkAnyOverlap(T[] a, T[] b)
+    {
+        for(T t:a)
+        {
+            for(T tInner:b)
+            {
+                if(t.equals(tInner))
+                    return false;
+            }
+        }
+        return true;
+    }*/
+    
+    //public boolean checkRedundant(ArrayList<FoundWord> alreadyFound, FoundWord checking)
+    //{
+       // for(FoundWord w:alreadyFound)
+        //{
+           
+            
+        //}
+    //}
     /*
      * finds the location and direction of search in puzzle, treating puzzle like
      * a 2-d char array.  It returns the starting point in the form
@@ -348,14 +369,17 @@ public class CrosswordWindow extends JFrame
                         testWord = pullOutWord(puzzle, iInner, i, x, y, search.length());
                         if(differenceCompare(search, testWord) > maxMatch)
                         {
+                            maxMatch = differenceCompare(search, testWord);
                             possibleWords.clear();
                             possibleWords.add(new FoundWord(search, 0, new int[] {iInner, i, x, y}));
                         }
+                        //for later implementation
+                        //if((differenceCompare(search, testWord) > maxMatch) && !testRedundance(foundWords, testWord))
                     }
                 }
             }
         }
-    if(possibleWords.size() == 0)
+    if(possibleWords.isEmpty())
         possibleWords.add(new FoundWord(search, 0, new int[] {-1, -1, -1, -1}));
     return possibleWords;
     }
