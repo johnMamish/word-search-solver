@@ -217,8 +217,7 @@ public class CrosswordWindow extends JFrame
                 foundWords.clear();
                 for(int i = 0;i < words.size();i++)
                 {
-                    resultHolder = searchPuzzle(puzzle, words.get(i));
-                    foundWords.add(new FoundWord(words.get(i), 0, resultHolder));
+                    foundWords.addAll(searchPuzzle(puzzle, words.get(i)));
                     foundWords.get(i).generateResponseString();
                 }
             }
@@ -278,6 +277,20 @@ public class CrosswordWindow extends JFrame
     }
     
     /*
+     * different way of comparing strings.  Returns the number of letters that
+     * are not the same.
+     */
+    public int differenceCompare(String a, String b)
+    {
+        int count = 0;
+        for(int i = 0;(i < a.length()) && (i < b.length());i++)
+        {
+            if(a.charAt(i) == b.charAt(i))
+                count++;
+        }
+        return count;
+    }
+    /*
      * returns a word from an arbitrary location going in an arbritrary direction
      * of the puzzle arraylist.  Think of puzzle as a 2-d char array.
      * 
@@ -319,9 +332,10 @@ public class CrosswordWindow extends JFrame
      * 
      * if the word cannot be found, an array with -1 as the first value is returned.
      */
-    public int[] searchPuzzle(ArrayList<String> puzzle, String search)
+    public ArrayList<FoundWord> searchPuzzle(ArrayList<String> puzzle, String search)
     {
-        int[] result = new int[4];
+        ArrayList<FoundWord> possibleWords = new ArrayList<FoundWord>();
+        int maxMatch = search.length()/2;
         String testWord;
         for(int i = 0;i < puzzle.size();i++)
         {
@@ -332,19 +346,17 @@ public class CrosswordWindow extends JFrame
                     for(int y = -1;y <= 1;y++)
                     {
                         testWord = pullOutWord(puzzle, iInner, i, x, y, search.length());
-                        if(!testWord.equals("") && testWord.equals(search))
+                        if(differenceCompare(search, testWord) > maxMatch)
                         {
-                            result[0] = iInner;
-                            result[1] = i;
-                            result[2] = x;
-                            result[3] = y;
-                            return result;
+                            possibleWords.clear();
+                            possibleWords.add(new FoundWord(search, 0, new int[] {iInner, i, x, y}));
                         }
                     }
                 }
             }
         }
-    result[0] = -1;
-    return result;
+    if(possibleWords.size() == 0)
+        possibleWords.add(new FoundWord(search, 0, new int[] {-1, -1, -1, -1}));
+    return possibleWords;
     }
 }
